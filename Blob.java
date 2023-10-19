@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -7,9 +10,15 @@ public class Blob {
     private String fileName, sha1Text;
     private static String fileContents;
 
-    public Blob(String fileName) {
+    public Blob(String fileName) throws IOException { // grabs existing file on disk w fileName
+        // blob files are the file contents
         this.fileName = fileName;
-
+        fileContents = "";
+        BufferedReader br = new BufferedReader(new FileReader(fileName));
+        while (br.ready()) {
+            fileContents += (char) (br.read());
+        }
+        br.close();
     }
 
     public String getFileName() {
@@ -26,24 +35,17 @@ public class Blob {
 
     // Java program to calculate SHA-1 hash value
     public void fileToSHA1() throws NoSuchAlgorithmException {
-        // getInstance() method is called with algorithm SHA-1
         MessageDigest md = MessageDigest.getInstance("SHA-1");
-
-        // digest() method is called
-        // to calculate message digest of the input string
-        // returned as array of byte
         byte[] messageDigest = md.digest(fileContents.getBytes());
-
-        // Convert byte array into signum representation
         BigInteger no = new BigInteger(1, messageDigest);
-
-        // Convert message digest into hex value
         sha1Text = no.toString(16);
-
-        // Add preceding 0s to make it 32 bit
         while (sha1Text.length() < 32) {
             sha1Text = "0" + sha1Text;
         }
+    }
+
+    public void writeToObjFolder() {
+        // File file = new File ("")
     }
 
     // Driver code
